@@ -2,6 +2,7 @@ package release
 
 import org.gradle.api.GradleException
 import org.gradle.testfixtures.ProjectBuilder
+
 import spock.lang.Specification
 
 @Mixin(PluginHelper)
@@ -19,6 +20,9 @@ class GitReleasePluginTests extends Specification {
         exec(true, [:], remoteRepo, 'git', 'config', '--add', 'receive.denyCurrentBranch', 'ignore')//suppress errors when pushing
 
         exec(false, [:], testDir, 'git', 'clone', remoteRepo.canonicalPath, 'GitReleasePluginTestLocal')
+        // prevent issues when committing due missing user details
+        exec(true, [:], localRepo, 'git', 'config', 'user.email', 'GitReleasePluginTestLocal@example.com')
+        exec(true, [:], localRepo, 'git', 'config', 'user.name', 'GitReleasePluginTestLocal')
 
         project = ProjectBuilder.builder().withName("GitReleasePluginTest").withProjectDir(localRepo).build()
         project.version = "1.1"
