@@ -134,15 +134,66 @@ class ReleasePlugin extends PluginHelper implements Plugin<Project> {
 		updateVersionProperty(version)
 	}
 
-    String getReleaseVersion(String candidateVersion = "${project.version}") {
-        String releaseVersion = project.properties['releaseVersion'];
+	String getReleaseVersion(String candidateVersion = "${project.version}") {
+		String releaseVersion = project.properties['releaseVersion'];
+		String releaseType = project.properties['releaseType'];
 
-        if (useAutomaticVersion()) {
-            return releaseVersion ?: candidateVersion;
-        }
+		if (releaseType) {
+			if (releaseVersion) {
+				throw new GradleException("Both releaseVersion ($releaseVersion) and releaseType ($releaseType) specified, don't know what to do!")
+			}
+			releaseVersion = getSemanticVersion(candidateVersion, releaseType)
+		}
 
-        return readLine("This release version:", releaseVersion ?: candidateVersion);
-    }
+		String defaultVersion = releaseVersion ?: candidateVersion
+		if (useAutomaticVersion()) {
+			return defaultVersion;
+		}
+
+		return readLine("This release version:", defaultVersion);
+	}
+
+	String getSemanticVersion(String candidateVersion, String releaseType) {
+
+		// releaseType = meaning of the parts of the version number (in order)
+		def releaseTypes = ['major', 'minor', 'patch']
+		def semanticVersioningPattern = /(\d+).(\d+).(\d+)([^\d]*$)/
+
+		int incrementIndex = releaseTypes.indexOf(releaseType)
+		if (incrementIndex < 0) {
+			throw new GradleException("Failed to set semantic version - unknown release type '$releaseType', valid are: $releaseTypes")
+		}
+
+		Matcher m = candidateVersion =~ semanticVersioningPattern
+		if (!m.find()) {
+			throw new GradleException("Failed to parse version [$candidateVersion] - did not match semantic version pattern")
+		}
+
+		if (project.ext.get('usesSnapshot')) {
+			// if a SNAPSHOT version was set and a release of the 'lowest' type is requested (e.g. 'patch'), then we do not need to increment that
+			if (incrementIndex == releaseTypes.size() - 1) {
+				incrementIndex = releaseTypes.size()
+			}
+		}
+		/*
+		 * Will extract the version parts and increment them accordingly. Given '1.2.3-SNAPSHOT' will result in:
+		 * major: 2.0.0
+		 * minor: 1.3.0
+		 * patch: 1.2.3
+		 */
+		int[] versionParts = new int[3]
+		for (int i = 0; i < 3; i++) {
+			int versionPart = (m[0][i+1] as int)
+			if (i == incrementIndex) {
+				versionPart += 1
+			} else if (i > incrementIndex) {
+				versionPart = 0
+			}
+			versionParts[i] = versionPart
+		}
+		String remainder = m[0][4]
+		return "${versionParts[0]}.${versionParts[1]}.${versionParts[2]}${remainder}"
+	}
 
 	void unSnapshotVersion() {
 		def version = project.version.toString()
