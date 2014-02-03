@@ -41,6 +41,10 @@ class ReleasePluginSemanticVersionTests extends Specification {
 		project.confirmReleaseVersion.execute()
 		then:
 		project.version == '1.2.1'
+		when:
+		project.updateVersion.execute()
+		then:
+		project.version == '1.2.2-SNAPSHOT'
 	}
 
 	def 'when a minor release is executed'() {
