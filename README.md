@@ -1,7 +1,8 @@
-## Need help, or someone to take over
+## Forked gradle-release plugin to improve support for semantic versions 
 
-I Haven't had any time lately to work on this project. I'm very thankful to those in the Gradle community who've submitted patches.
-Unfortunately, those patches really have comprised practically all work that's been done on this project over the last few months.
+We have added support for semi-automatic releases using sematic versions.
+We wanted to be able to easily create major and minor releases without the need to change the version manually.
+Now you simply define which type of release you want and the plugin does the rest for you.
 
 ## Introduction
 
@@ -19,7 +20,7 @@ The `gradle release` task defines the following as the default release process:
 * Prompts you for the next version.
 * Commits the project with the new version.
 
-Current Version: 1.2
+Current Version: 1.2.1-esailors
 
 Current SCM support: [Bazaar](http://bazaar.canonical.com/en/), [Git](http://git-scm.com/), [Mercurial](http://mercurial.selenic.com/), and [Subversion](http://subversion.apache.org/)
 
@@ -63,6 +64,39 @@ To use it directly or through your own Maven Repository proxy define a `buildscr
 ## Usage
 
 After you have your `build.gradle` file configured, simply run: `gradle release` and follow the on-screen instructions.
+
+If you want to use the semi-automatic semantic versioning feature, you need to specify which type of release you want to execute.
+You can do this by setting the `releaseType` property to `major`, `minor` or `patch`.
+
+Here is an example:
+    -PreleaseType=patch -Pgradle.release.useAutomaticVersion=true
+
+You will usually combine that with setting versions automatically. We have set that in our build script.
+
+Here is what happens when you specify a release type:
+<table border="0">
+  <tr>
+     <th>Value</th>
+     <th>Description</th>
+     <th>Example</th>
+  <tr>
+<tr>
+  <td><strong>patch</strong></td>
+  <td>This release contains only backwards-compatible bug fixes and small changes</td>
+  <td>A version of 'x.y.3-SNAPSHOT' will be tagged and released as 'x.y.3'. Afterwards the version will be updated to 'x.y.4-SNAPSHOT'.</td>
+</tr>
+<tr>
+  <td><strong>minor</strong></td>
+  <td>This release contains only new functionality in a backwards-compatible manner</td>
+  <td>A version of 'x.3.z-SNAPSHOT' will be tagged and released as 'x.4.0'. Afterwards the version will be updated to 'x.4.1-SNAPSHOT'.</td>
+</tr>
+<tr>
+  <td><strong>major</strong></td>
+  <td>This release has incompatible API changes or brings a lot of new features</td>
+  <td>A version of '3.y.z-SNAPSHOT' will be tagged and released as '4.0.0'. Afterwards the version will be updated to '4.0.1-SNAPSHOT'.</td>
+</tr>
+</table>
+If you don't use SNAPSHOT it will basically work the same.
 
 ### Configuration
 
@@ -187,6 +221,10 @@ Support for [multi-project builds](http://gradle.org/docs/current/userguide/mult
 3. Only one version control system is used by both root and sub projects
 
 This means the gradle-release plugin does not support sub projects that have different versions from their parent|root project, and it does not support sub projects that have different version control systems from the parent project.
+
+If you want to add steps to multi-project builds, it gets slightly trickier as you should do it for all sub-projects as well:
+
+    createReleaseTag.dependsOn subprojects.collect { ":$it.name:uploadArchives" } + uploadArchives
 
 ### Working in Continuous Integration
 
