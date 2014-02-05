@@ -20,7 +20,7 @@ The `gradle release` task defines the following as the default release process:
 * Prompts you for the next version.
 * Commits the project with the new version.
 
-Current Version: 1.2.1-esailors
+Current Version: 1.2.2-esailors
 
 Current SCM support: [Bazaar](http://bazaar.canonical.com/en/), [Git](http://git-scm.com/), [Mercurial](http://mercurial.selenic.com/), and [Subversion](http://subversion.apache.org/)
 
@@ -67,8 +67,10 @@ After you have your `build.gradle` file configured, simply run: `gradle release`
 
 If you want to use the semi-automatic semantic versioning feature, you need to specify which type of release you want to execute.
 You can do this by setting the `releaseType` property to `major`, `minor` or `patch`.
+Have a look at http://semver.org/ to read more about semantic versioning and the meaning of the release types.
 
 Here is an example:
+
     -PreleaseType=patch -Pgradle.release.useAutomaticVersion=true
 
 You will usually combine that with setting versions automatically. We have set that in our build script.
@@ -77,22 +79,18 @@ Here is what happens when you specify a release type:
 <table border="0">
   <tr>
      <th>Value</th>
-     <th>Description</th>
      <th>Example</th>
   <tr>
 <tr>
   <td><strong>patch</strong></td>
-  <td>This release contains only backwards-compatible bug fixes and small changes</td>
   <td>A version of 'x.y.3-SNAPSHOT' will be tagged and released as 'x.y.3'. Afterwards the version will be updated to 'x.y.4-SNAPSHOT'.</td>
 </tr>
 <tr>
   <td><strong>minor</strong></td>
-  <td>This release contains only new functionality in a backwards-compatible manner</td>
   <td>A version of 'x.3.z-SNAPSHOT' will be tagged and released as 'x.4.0'. Afterwards the version will be updated to 'x.4.1-SNAPSHOT'.</td>
 </tr>
 <tr>
   <td><strong>major</strong></td>
-  <td>This release has incompatible API changes or brings a lot of new features</td>
   <td>A version of '3.y.z-SNAPSHOT' will be tagged and released as '4.0.0'. Afterwards the version will be updated to '4.0.1-SNAPSHOT'.</td>
 </tr>
 </table>

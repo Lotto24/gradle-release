@@ -155,44 +155,36 @@ class ReleasePlugin extends PluginHelper implements Plugin<Project> {
 
 	String getSemanticVersion(String candidateVersion, String releaseType) {
 
-		// releaseType = meaning of the parts of the version number (in order)
-		def releaseTypes = ['major', 'minor', 'patch']
-		def semanticVersioningPattern = /(\d+).(\d+).(\d+)([^\d]*$)/
-
-		int incrementIndex = releaseTypes.indexOf(releaseType)
-		if (incrementIndex < 0) {
-			throw new GradleException("Failed to set semantic version - unknown release type '$releaseType', valid are: $releaseTypes")
-		}
-
-		Matcher m = candidateVersion =~ semanticVersioningPattern
+		Matcher m = candidateVersion =~ /(\d+).(\d+).(\d+)([^\d]*$)/
 		if (!m.find()) {
-			throw new GradleException("Failed to parse version [$candidateVersion] - did not match semantic version pattern")
+			throw new GradleException("Failed to parse version [$candidateVersion] - did not match semantic version pattern (1.2.3*)")
 		}
 
-		if (project.ext.get('usesSnapshot')) {
-			// if a SNAPSHOT version was set and a release of the 'lowest' type is requested (e.g. 'patch'), then we do not need to increment that
-			if (incrementIndex == releaseTypes.size() - 1) {
-				incrementIndex = releaseTypes.size()
-			}
-		}
-		/*
-		 * Will extract the version parts and increment them accordingly. Given '1.2.3-SNAPSHOT' will result in:
-		 * major: 2.0.0
-		 * minor: 1.3.0
-		 * patch: 1.2.3
-		 */
-		int[] versionParts = new int[3]
-		for (int i = 0; i < 3; i++) {
-			int versionPart = (m[0][i+1] as int)
-			if (i == incrementIndex) {
-				versionPart += 1
-			} else if (i > incrementIndex) {
-				versionPart = 0
-			}
-			versionParts[i] = versionPart
-		}
+		int major = (m[0][1] as int)
+		int minor = (m[0][2] as int)
+		int patch = (m[0][3] as int)
 		String remainder = m[0][4]
-		return "${versionParts[0]}.${versionParts[1]}.${versionParts[2]}${remainder}"
+
+		// increment the version part as requested
+		switch (releaseType) {
+			case 'major':
+				major++;
+				minor = 0;
+				patch = 0;
+				break;
+			case 'minor':
+				minor++;
+				patch = 0;
+				break;
+			case 'patch':
+				// not incrementing anything
+				break;
+			default:
+				def releaseTypes = ['major', 'minor', 'patch']
+				throw new GradleException("Failed to set semantic version - unknown release type '$releaseType', valid are: $releaseTypes")
+		}
+
+		return "${major}.${minor}.${patch}${remainder}"
 	}
 
 	void unSnapshotVersion() {
