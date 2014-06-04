@@ -1,5 +1,7 @@
 ## Forked gradle-release plugin to improve support for semantic versions 
 
+[![Build Status](https://travis-ci.org/eSailors/gradle-release.svg?branch=semanticVersioning)](https://travis-ci.org/eSailors/gradle-release)
+
 We have added support for semi-automatic releases using sematic versions.
 We wanted to be able to easily create major and minor releases without the need to change the version manually.
 Now you simply define which type of release you want and the plugin does the rest for you.
