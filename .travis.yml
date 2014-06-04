@@ -3,4 +3,10 @@ script:
  - git config --global user.name "TestUser"
  - git config --global user.email "test_user@example.com"
  - ./gradlew test -i
-
+jdk:
+- oraclejdk7
+- oraclejdk8
+notifications:
+  email:
+    - Martin.Joehren@esailors.de
+    - Uwe.Petschke@esailors.de
