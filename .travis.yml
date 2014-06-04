@@ -1,5 +1,6 @@
 language: groovy
 install: apt-get install git
+script: ./gradlew test -i
 branches:
   only:
     - semanticVersioning
