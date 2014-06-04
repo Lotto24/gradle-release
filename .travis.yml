@@ -1,6 +1,6 @@
 language: groovy
-before-install:
- - git config --global user.email "you@example.com"
- - git config --global user.name "Your Name"
-script: ./gradlew test -i
+script: 
+ - git config --global user.name "TestUser"
+ - git config --global user.email "test_user@example.com"
+ - ./gradlew test -i
 
