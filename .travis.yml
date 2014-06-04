@@ -1,4 +1,4 @@
 language: groovy
 branches:
   only:
-    - master
+    - semanticVersioning
