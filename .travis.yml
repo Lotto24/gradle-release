@@ -5,3 +5,4 @@ before-install:
 branches:
   only:
     - semanticVersioning
+
