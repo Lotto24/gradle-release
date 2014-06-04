@@ -3,7 +3,4 @@ before-install:
  - git config --global user.email "you@example.com"
  - git config --global user.name "Your Name"
 script: ./gradlew test -i
-branches:
-  only:
-    - semanticVersioning
 
