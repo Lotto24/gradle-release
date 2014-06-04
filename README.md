@@ -21,6 +21,7 @@ The `gradle release` task defines the following as the default release process:
 
 Current Version: 1.2
 
+
 Current SCM support: [Bazaar](http://bazaar.canonical.com/en/), [Git](http://git-scm.com/), [Mercurial](http://mercurial.selenic.com/), and [Subversion](http://subversion.apache.org/)
 
 ## Installation
