@@ -1,4 +1,5 @@
 language: groovy
+install: apt-get install git
 branches:
   only:
     - semanticVersioning
