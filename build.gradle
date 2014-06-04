@@ -14,3 +14,7 @@ dependencies {
 	testCompile "junit:junit:$junitVersion",
 			"org.ajoberstar:gradle-git:$gradleGitVersion"
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.12'
+}
